@@ -1,14 +1,9 @@
-# python-georss-nrcan-earthquakes-client
+# python-georss-emsc-csem-earthquakes-client
 
-[![Build Status](https://travis-ci.org/exxamalte/python-georss-nrcan-earthquakes-client.svg)](https://travis-ci.org/exxamalte/python-georss-nrcan-earthquakes-client)
-[![Coverage Status](https://coveralls.io/repos/github/exxamalte/python-georss-nrcan-earthquakes-client/badge.svg?branch=master)](https://coveralls.io/github/exxamalte/python-georss-nrcan-earthquakes-client?branch=master)
-[![PyPi](https://img.shields.io/pypi/v/georss-nrcan-earthquakes-client.svg)](https://pypi.python.org/pypi/georss-nrcan-earthquakes-client)
-[![Version](https://img.shields.io/pypi/pyversions/georss-nrcan-earthquakes-client.svg)](https://pypi.python.org/pypi/georss-nrcan-earthquakes-client)
-
-This library provides convenient access to the [Natural Resources Canada Earthquakes Feed](http://www.earthquakescanada.nrcan.gc.ca/index-en.php).
+This library provides convenient access to the [EMSC CSEM](https://www.emsc-csem.org/).
 
 ## Installation
-`pip install georss-nrcan-earthquakes-client`
+`pip install georss_emsc_csem_earthquakes_client`
 
 ## Usage
 See below for an example of how this library can be used. After instantiating 
@@ -21,13 +16,6 @@ the actual data in the form of a list of specific feed entries.
 * _UPDATE_OK_NO_DATA_: Update went fine but no data was retrieved, for example because the server indicated that there was not update since the last request.
 * _UPDATE_ERROR_: Something went wrong during the update
 
-**Supported Languages**
-
-| Language | Feed |
-|----------|------|
-| English  | `en` |
-| Français | `fr` |
-
 **Supported Filters**
 
 | Filter            |                            | Description |
@@ -37,15 +25,13 @@ the actual data in the form of a list of specific feed entries.
 
 **Example**
 ```python
-from georss_nrcan_earthquakes_client import NaturalResourcesCanadaEarthquakesFeed
+from georss_emsc_csem_earthquakes_client import EMSCEarthquakesFeed
 # Home Coordinates: Latitude: 49.25, Longitude: -123.1
-# Language: English
 # Filter radius: 200 km
 # Filter minimum magnitude: 4.0
-feed = NaturalResourcesCanadaEarthquakesFeed((49.25, -123.1), 
-                                             'en', 
-                                             filter_radius=200,
-                                             filter_minimum_magnitude=4.0)
+feed = EMSCEarthquakesFeed((49.25, -123.1), 
+                            filter_radius=200,
+                            filter_minimum_magnitude=4.0)
 status, entries = feed.update()
 ```
 

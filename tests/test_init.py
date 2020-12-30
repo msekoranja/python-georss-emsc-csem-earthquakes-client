@@ -6,9 +6,9 @@ from unittest import mock
 from georss_client import UPDATE_OK
 from georss_client.exceptions import GeoRssException
 from tests import load_fixture
+from georss_emsc_csem_earthquakes_client import EMSCEarthquakesFeed
 
 HOME_COORDINATES = (46, 14)
-
 
 class TestEMSCEarthquakesFeed(unittest.TestCase):
     """Test the EMSC CSEM Canada Earthquakes feed."""
@@ -23,17 +23,16 @@ class TestEMSCEarthquakesFeed(unittest.TestCase):
             .return_value.text = \
             load_fixture('emsc_csem_earthquakes.xml')
 
-        feed = NaturalResourcesCanadaEarthquakesFeed(HOME_COORDINATES)
-        assert repr(feed) == "<NaturalResourcesCanadaEarthquakesFeed(" \
-                             "home=(49.25, -123.1), url=http://www." \
-                             "earthquakescanada.nrcan.gc.ca/index-en.php?" \
-                             "tpl_region=canada&tpl_output=rss, " \
-                             "radius=None, magnitude=None)>"
+        feed = EMSCEarthquakesFeed(HOME_COORDINATES)
+        assert repr(feed) == "<EMSCEarthquakesFeed(" \
+                             "home=(46, 14), url=https://www.emsc-csem.org/service/rss/rss.php?typ=emsc&min_lat=10&min_long=-30&max_long=65, " \
+                             "filter_radius=None, filter_min_magnitude=None)>"
         status, entries = feed.update()
         assert status == UPDATE_OK
         self.assertIsNotNone(entries)
         assert len(entries) == 2
 
+"""
         feed_entry = entries[0]
         assert feed_entry.title == "Title 1"
         assert feed_entry.external_id == "1234"
@@ -51,6 +50,7 @@ class TestEMSCEarthquakesFeed(unittest.TestCase):
         feed_entry = entries[1]
         assert feed_entry.title == "Title 2"
         self.assertIsNone(feed_entry.published)
+"""
 
     @mock.patch("requests.Request")
     @mock.patch("requests.Session")
@@ -62,18 +62,11 @@ class TestEMSCEarthquakesFeed(unittest.TestCase):
             .return_value.text = \
             load_fixture('emsc_csem_earthquakes.xml')
 
-        feed = NaturalResourcesCanadaEarthquakesFeed(
-            HOME_COORDINATES, filter_minimum_magnitude=4.0)
-        assert repr(feed) == "<NaturalResourcesCanadaEarthquakesFeed(" \
-                             "home=(49.25, -123.1), url=http://www." \
-                             "earthquakescanada.nrcan.gc.ca/index-en.php?" \
-                             "tpl_region=canada&tpl_output=rss, " \
-                             "radius=None, magnitude=4.0)>"
+        feed = EMSCEarthquakesFeed(HOME_COORDINATES, filter_minimum_magnitude=4.0)
+        assert repr(feed) == "<EMSCEarthquakesFeed(" \
+                             "home=(46, 14), url=https://www.emsc-csem.org/service/rss/rss.php?typ=emsc&min_lat=10&min_long=-30&max_long=65, " \
+                             "filter_radius=None, filter_min_magnitude=4.0)>"
         status, entries = feed.update()
         assert status == UPDATE_OK
         self.assertIsNotNone(entries)
         assert len(entries) == 1
-
-        feed_entry = entries[0]
-        assert feed_entry.title == "Title 1"
-        assert feed_entry.external_id == "1234"
