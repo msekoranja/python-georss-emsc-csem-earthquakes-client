@@ -42,7 +42,7 @@ class TestEMSCEarthquakesFeed(unittest.TestCase):
                                  tzinfo=datetime.timezone.utc)
         assert feed_entry.magnitude == 2.2
         #assert feed_entry.attribution == None
-        assert repr(feed_entry) == "<EMSCEarthquakesFeedEntry(id=https://www.emsc-csem.org/Earthquake/earthquake.php?id=934374, " \ 
+        assert repr(feed_entry) == "<EMSCEarthquakesFeedEntry(id=https://www.emsc-csem.org/Earthquake/earthquake.php?id=934374, " \
                                    "title=ML 2.2  PYRENEES, link=https://www.emsc-csem.org/Earthquake/earthquake.php?id=934374, " \
                                     "geometry=<Point(latitude=42.9, longitude=0.2)>, time=2020-12-30 21:14:43 UTC, depth=2, magnitude=2.2)>"
 
