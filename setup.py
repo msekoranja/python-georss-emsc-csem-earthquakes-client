@@ -12,7 +12,7 @@ setup(
     version="0.1",
     author="Matej Sekoranja",
     author_email="matej.sekoranja@gmail.com",
-    description="A GeoRSS client library for the EMSCS CSEM Earthquakes feed.",
+    description="A GeoRSS client library for the EMSC CSEM Earthquakes feed.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/msekoranja/python-georss-emsc-csem-earthquakes-client",
