@@ -29,8 +29,6 @@ XML_TAG_TIME = 'https://www.emsc-csem.org:time'
 XML_TAG_DEPTH = 'https://www.emsc-csem.org:depth'
 XML_TAG_LINK = 'link'
 
-MAGNITUDE_ML_PREFIX = 'ML '
-
 
 class EMSCEarthquakesFeedManager(FeedManagerBase):
     """Feed Manager for EMSC CSEM Earthquakes feed."""
@@ -116,10 +114,8 @@ class EMSCEarthquakesFeedEntry(FeedEntry):
     @property
     def magnitude(self) -> Optional[float]:
         """Return magnitude of the earthquake.
-           'Richter' magnitude scale is being used and expected, i.e. 'ML ' prefix."""
+           Magnitude scale is being reported as prefix and needs to be removed, e.g 'ML ' prefix."""
         mag_str = self._rss_entry._attribute_with_text([XML_TAG_MAGNITUDE])
         if mag_str:
-            if mag_str.startswith(MAGNITUDE_ML_PREFIX):
-                mag_str = mag_str[len(MAGNITUDE_ML_PREFIX):]
-            return float(mag_str)
+            return float(mag_str.rpartition(' ')[-1])
         return None
