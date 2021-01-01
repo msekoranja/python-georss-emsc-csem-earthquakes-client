@@ -63,7 +63,7 @@ class TestEMSCEarthquakesFeed(unittest.TestCase):
         feed = EMSCEarthquakesFeed(HOME_COORDINATES, filter_minimum_magnitude=2.5)
         assert repr(feed) == "<EMSCEarthquakesFeed(" \
                              "home=(46.1, 14.2), url=https://www.emsc-csem.org/service/rss/rss.php?typ=emsc&min_lat=10&min_long=-30&max_long=65, " \
-                             "filter_radius=None, filter_min_magnitude=2.5)>"
+                             "filter_radius=None, filter_minimum_magnitude=2.5)>"
         status, entries = feed.update()
         assert status == UPDATE_OK
         self.assertIsNotNone(entries)

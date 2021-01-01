@@ -4,6 +4,10 @@ EMSC CSEM Earthquakes Feed.
 Fetches GeoRSS feed from EMSC CSEM Earthquakes.
 """
 import logging
+import datetime
+
+from dateutil.parser import parse
+from tzlocal import get_localzone
 
 from typing import Optional
 
@@ -18,7 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 Feeds are available here: https://www.emsc-csem.org/service/rss/
 Use 'Last 50 earthquakes in euro mediteranean region' feed as default
 """
-DEFAULT_URL = 'https://www.emsc-csem.org/service/rss/rss.php?typ=emsc&min_lat=10&min_long=-30&max_long=65'
+DEFAULT_URL = 'https://www.emsc-csem.org/service/rss/rss.php?typ=emsc'
 
 XML_TAG_MAGNITUDE = 'https://www.emsc-csem.org:magnitude'
 XML_TAG_TIME = 'https://www.emsc-csem.org:time'
@@ -33,12 +37,14 @@ class EMSCEarthquakesFeedManager(FeedManagerBase):
 
     def __init__(self, generate_callback, update_callback, remove_callback,
                  coordinates, filter_radius=None,
-                 filter_minimum_magnitude=None):
+                 filter_minimum_magnitude=None,
+                 filter_timespan: datetime.timedelta=None):
         """Initialize the EMSC CSEM Earthquakes Feed Manager."""
         feed = EMSCEarthquakesFeed(
             coordinates,
             filter_radius=filter_radius,
-            filter_minimum_magnitude=filter_minimum_magnitude)
+            filter_minimum_magnitude=filter_minimum_magnitude,
+            filter_timespan=filter_timespan)
         super().__init__(feed, generate_callback, update_callback,
                          remove_callback)
 
@@ -47,15 +53,16 @@ class EMSCEarthquakesFeed(GeoRssFeed):
     """EMSC CSEM Earthquakes feed."""
 
     def __init__(self, home_coordinates, url=DEFAULT_URL, filter_radius=None,
-                 filter_minimum_magnitude=None):
+                 filter_minimum_magnitude=None, filter_timespan: datetime.timedelta=None):
         """Initialise this service."""
         super().__init__(home_coordinates, url,
                          filter_radius=filter_radius)
         self._filter_minimum_magnitude = filter_minimum_magnitude
+        self._filter_timespan = filter_timespan
 
     def __repr__(self):
         """Return string representation of this feed."""
-        return '<{}(home={}, url={}, filter_radius={}, filter_min_magnitude={})>'.format(
+        return '<{}(home={}, url={}, filter_radius={}, filter_minimum_magnitude={})>'.format(
             self.__class__.__name__, self._home_coordinates, self._url,
             self._filter_radius, self._filter_minimum_magnitude)
 
@@ -67,11 +74,13 @@ class EMSCEarthquakesFeed(GeoRssFeed):
         """Filter the provided entries."""
         entries = super()._filter_entries(entries)
         if self._filter_minimum_magnitude:
-            # Return only entries that have an actual magnitude value, and
-            # the value is equal or above the defined threshold.
-            return list(filter(lambda entry:
-                               entry.magnitude and entry.magnitude >= self.
-                               _filter_minimum_magnitude, entries))
+            entries = list(filter(lambda entry:
+                                  entry.magnitude and entry.magnitude >=
+                                  self._filter_minimum_magnitude, entries))
+        if self._filter_timespan:
+            from_time = datetime.datetime.now(get_localzone()) - self._filter_timespan
+            entries = list(filter(lambda entry:
+                                  entry.time >= from_time, entries))
         return entries
 
 
@@ -94,10 +103,10 @@ class EMSCEarthquakesFeedEntry(FeedEntry):
         return self._rss_entry._attribute_with_text([XML_TAG_LINK])
 
     @property
-    def time(self) -> Optional[str]:
-        """Return time of the earthquake."""
-        #return datetime.datetime.strptime(self._attribute([XML_TAG_TIME]), '%Y-%m-%d %H:%M:%S %Z')
-        return self._rss_entry._attribute_with_text([XML_TAG_TIME])
+    def time(self) -> Optional[datetime.datetime]:
+        """Return time of the earthquake in local timezone."""
+        return parse(self._rss_entry._attribute_with_text([XML_TAG_TIME])).astimezone(get_localzone())
+        #return self._rss_entry._attribute_with_text([XML_TAG_TIME])
 
     @property
     def depth(self) -> Optional[float]:

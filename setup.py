@@ -9,7 +9,7 @@ REQUIRES = [
 
 setup(
     name="georss_emsc_csem_earthquakes_client",
-    version="0.1",
+    version="0.2",
     author="Matej Sekoranja",
     author_email="matej.sekoranja@gmail.com",
     description="A GeoRSS client library for the EMSC CSEM Earthquakes feed.",

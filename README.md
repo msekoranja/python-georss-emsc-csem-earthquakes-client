@@ -22,16 +22,20 @@ the actual data in the form of a list of specific feed entries.
 |-------------------|----------------------------|-------------|
 | Radius            | `filter_radius`            | Radius in kilometers around the home coordinates in which events from the feed are included. |
 | Minimum Magnitude | `filter_minimum_magnitude` | Minimum magnitude as float value. Only events with a magnitude equal or above this value are included. |
+| Time span | `filter_timespan` | Maximum age of reported event. |
 
 **Example**
 ```python
+from datetime import timedelta
 from georss_emsc_csem_earthquakes_client import EMSCEarthquakesFeed
-# Home Coordinates: Latitude: 49.25, Longitude: -123.1
-# Filter radius: 200 km
-# Filter minimum magnitude: 4.0
-feed = EMSCEarthquakesFeed((49.25, -123.1), 
-                            filter_radius=200,
-                            filter_minimum_magnitude=4.0)
+# Home Coordinates: Latitude: 46.1, Longitude: 14.1
+# Filter radius: 500 km
+# Filter minimum magnitude: 2.0
+# Filter time span: 3 days
+feed = EMSCEarthquakesFeed((46.1, 14.1), 
+                            filter_radius=500,
+                            filter_minimum_magnitude=2.0,
+                            filter_timespan=timedelta(days=3))
 status, entries = feed.update()
 ```
 
